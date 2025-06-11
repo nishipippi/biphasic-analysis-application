@@ -56,7 +56,7 @@ export const PhasePlanePlot: React.FC<PhasePlanePlotProps> = ({
           fixedrange: true,
         },
         title: { // 追加
-          text: 'Phase Plane',
+          text: 'Phase Plane - クリックで経時変化を表示',
           font: { color: '#E2E8F0', size: 20 },
           x: 0.05, // グラフの左端から5%の位置
           xanchor: 'left',
