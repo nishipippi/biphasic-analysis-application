@@ -1,0 +1,11 @@
+/* index.css のどこかに追加 */
+.dot {
+  transform: translateX(0);
+}
+/* 修正後のセレクタ */
+.is-checked .block {
+  background-color: #10B981; /* teal-500 */
+}
+.is-checked .dot {
+  transform: translateX(100%);
+}

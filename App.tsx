@@ -13,19 +13,28 @@ const App: React.FC = () => {
   const [parameters, setParameters] = useState<ParametersState>(INITIAL_PARAMETERS);
   const [trajectoryStartPoint, setTrajectoryStartPoint] = useState<TrajectoryPoint | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Start true for initial calculation
+  const [isRealtimeUpdateEnabled, setIsRealtimeUpdateEnabled] = useState<boolean>(true); // 追加
+  const [updateTrigger, setUpdateTrigger] = useState<number>(0); // 追加
 
   const handleParametersChange = useCallback((newParams: ParametersState) => {
-    setIsLoading(true);
-    setParameters(newParams);
-    // When parameters change, existing trajectory might become irrelevant or could be recalculated.
-    // For now, let's clear it, or user can click again.
-    // setTrajectoryStartPoint(null); // Optional: clear trajectory on param change
-  }, []);
+    // リアルタイム更新が有効な場合のみ、Appのparameters stateを更新
+    if (isRealtimeUpdateEnabled) {
+      setIsLoading(true);
+      setParameters(newParams);
+    }
+  }, [isRealtimeUpdateEnabled]); // isRealtimeUpdateEnabled を依存配列に追加
 
   const handleResetParameters = useCallback(() => {
     setIsLoading(true);
     setParameters(INITIAL_PARAMETERS);
-    setTrajectoryStartPoint(null); 
+    setTrajectoryStartPoint(null);
+    setUpdateTrigger(prev => prev + 1); // リセット時も更新をトリガー
+  }, []);
+
+  const handleManualUpdate = useCallback((paramsToUpdate: ParametersState) => { // 追加
+    setIsLoading(true);
+    setParameters(paramsToUpdate); // ParameterControlsから渡された最新のパラメータで更新
+    setUpdateTrigger(prev => prev + 1); // useOdeSolverを再トリガー
   }, []);
 
   const handlePhasePlaneClick = useCallback((point: TrajectoryPoint) => {
@@ -45,6 +54,7 @@ const App: React.FC = () => {
     plotDomain: PLOT_DOMAIN,
     odeConfig: ODE_CONFIG,
     trajectoryStartPoint,
+    updateTrigger, // 新しいプロップとして追加
   });
   
   useEffect(() => {
@@ -116,6 +126,9 @@ const App: React.FC = () => {
             onParametersChange={handleParametersChange}
             onReset={handleResetParameters}
             initialParameters={INITIAL_PARAMETERS}
+            isRealtimeUpdateEnabled={isRealtimeUpdateEnabled} // 新しいプロップ
+            onToggleRealtimeUpdate={setIsRealtimeUpdateEnabled} // 新しいプロップ
+            onManualUpdate={handleManualUpdate} // 新しいプロップ
           />
         </div>
 

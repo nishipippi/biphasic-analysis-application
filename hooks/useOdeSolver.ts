@@ -58,6 +58,7 @@ interface OdeSolverProps {
   plotDomain: PlotDomain;
   odeConfig: OdeConfig;
   trajectoryStartPoint: TrajectoryPoint | null;
+  updateTrigger?: number; // 新しいプロップとして追加
 }
 
 export const useOdeSolver = ({
@@ -65,6 +66,7 @@ export const useOdeSolver = ({
   plotDomain,
   odeConfig,
   trajectoryStartPoint,
+  updateTrigger = 0, // デフォルト値を追加
 }: OdeSolverProps) => {
 
   const { xMin, xMax, yMin, yMax, tMax } = plotDomain;
@@ -158,7 +160,7 @@ export const useOdeSolver = ({
       showscale: false, // Do not show color scale for contour lines
       hoverinfo: 'name',
     };
-  }, [gridPoints, derivativesGrid.dxDtGrid, parameters]); // Add parameters if dxDtGrid depends on it
+  }, [gridPoints, derivativesGrid.dxDtGrid, parameters, updateTrigger]); // updateTrigger を追加
 
   const yNullclineData = useMemo<PlotlyData | null>(() => {
     return {
@@ -178,7 +180,7 @@ export const useOdeSolver = ({
       showscale: false,
       hoverinfo: 'name',
     };
-  }, [gridPoints, derivativesGrid.dyDtGrid, parameters]); // Add parameters if dyDtGrid depends on it
+  }, [gridPoints, derivativesGrid.dyDtGrid, parameters, updateTrigger]); // updateTrigger を追加
 
   const fixedPointsData = useMemo<PlotlyData | null>(() => {
     if (derivativesGrid.fixedPts.length === 0) return null;
@@ -192,13 +194,13 @@ export const useOdeSolver = ({
       hoverinfo: 'text',
       text: derivativesGrid.fixedPts.map(p => `Fixed Point<br>x: ${p.x.toFixed(2)}, y: ${p.y.toFixed(2)}`),
     };
-  }, [derivativesGrid.fixedPts]);
+  }, [derivativesGrid.fixedPts, updateTrigger]); // updateTrigger を追加
 
 
   const trajectoryPoints = useMemo(() => {
     if (!trajectoryStartPoint) return null;
     return rk4Solver(trajectoryStartPoint, parameters, tMax, dt);
-  }, [trajectoryStartPoint, parameters, tMax, dt]);
+  }, [trajectoryStartPoint, parameters, tMax, dt, updateTrigger]); // updateTrigger を追加
 
   const trajectoryData = useMemo<PlotlyData | null>(() => {
     if (!trajectoryPoints) return null;
@@ -211,7 +213,7 @@ export const useOdeSolver = ({
       line: { color: COLORS.trajectory, width: 2 },
       hoverinfo: 'skip', // Or show t, x, y if desired
     };
-  }, [trajectoryPoints]);
+  }, [trajectoryPoints, updateTrigger]); // updateTrigger を追加
 
   const timeCourseData = useMemo<PlotlyData[] | null>(() => {
     if (!trajectoryPoints) return null;
@@ -233,7 +235,7 @@ export const useOdeSolver = ({
         line: { color: COLORS.yTimeCourse, width: 2 },
       },
     ];
-  }, [trajectoryPoints]);
+  }, [trajectoryPoints, updateTrigger]); // updateTrigger を追加
 
   return {
     vectorFieldData,

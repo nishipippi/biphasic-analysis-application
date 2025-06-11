@@ -2,7 +2,7 @@ import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }: { mode: string }) => {
     const env = loadEnv(mode, '.', '');
     return {
       plugins: [cssInjectedByJsPlugin()],
@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
       },
       resolve: {
         alias: {
-          '@': path.resolve(__dirname, '.'),
+          '@': path.resolve(path.dirname(import.meta.url.replace('file:///', '')), '.'),
         }
       }
     };
