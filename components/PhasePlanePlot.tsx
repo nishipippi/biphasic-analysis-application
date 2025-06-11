@@ -53,8 +53,6 @@ export const PhasePlanePlot: React.FC<PhasePlanePlotProps> = ({
           gridcolor: '#4A5568', 
           linecolor: '#CBD5E0',
           tickfont: { color: '#CBD5E0' },
-          scaleanchor: "x", // For square aspect ratio, if desired
-          scaleratio: 1,    // For square aspect ratio
           fixedrange: true,
         },
         showlegend: true,
