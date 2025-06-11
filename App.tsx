@@ -1,5 +1,6 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import 'katex/dist/katex.min.css';
+import katex from 'katex';
 import { ParameterControls } from './components/ParameterControls';
 import { PhasePlanePlot } from './components/PhasePlanePlot';
 import { TimeCoursePlot } from './components/TimeCoursePlot';
@@ -66,11 +67,43 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const formulaRef1 = useRef<HTMLDivElement>(null);
+  const formulaRef2 = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (formulaRef1.current) {
+      katex.render(
+        "\\frac{dx}{dt} = \\frac{\\alpha_x}{1 + (y/K_{dy})^{n_y}} - d_x x + I_x",
+        formulaRef1.current,
+        {
+          throwOnError: false,
+          displayMode: false, // For inline math
+        }
+      );
+    }
+    if (formulaRef2.current) {
+      katex.render(
+        "\\frac{dy}{dt} = \\frac{\\alpha_y}{1 + (x/K_{dx})^{n_x}} - d_y y + I_y",
+        formulaRef2.current,
+        {
+          throwOnError: false,
+          displayMode: false, // For inline math
+        }
+      );
+    }
+  }, []);
+
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-gray-100 font-sans">
       <header className="bg-gray-800 p-4 shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-teal-400">Biphasic System Analyzer</h1>
+        <div className="flex items-center justify-center flex-wrap">
+          <h1 className="text-3xl font-bold text-teal-400">Biphasic System Analyzer</h1>
+          <div className="flex text-gray-300 text-xl mt-2 ml-4 space-x-4">
+            <div ref={formulaRef1}></div>
+            <div ref={formulaRef2}></div>
+          </div>
+        </div>
       </header>
 
       {isLoading && <Spinner />}

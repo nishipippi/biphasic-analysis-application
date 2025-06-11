@@ -1,14 +1,85 @@
-# Run and deploy your AI Studio app
+# Biphasic System Analyzer
 
-This contains everything you need to run your app locally.
+## 概要
+このアプリケーションは、二相系（Biphasic System）の動態をインタラクティブにシミュレーションし、可視化するためのウェブツールです。ユーザーはモデルのパラメーターを調整し、相平面プロットと時系列プロットを通じてシステムの挙動をリアルタイムで観察できます。
 
-## Run Locally
+## 機能
+- **モデルパラメーターの調整**: スライダーと数値入力を使用して、二相系モデルのパラメーターを動的に変更できます。
+- **相平面プロット**:
+    - ベクトル場: システムの状態空間における方向を示します。
+    - ヌルクライン: dx/dt=0 および dy/dt=0 の条件を満たす軌跡を表示します。
+    - 固定点: システムが安定または不安定な平衡状態にある点を示します。
+    - 軌跡シミュレーション: 相平面上の任意の点をクリックすることで、その点から始まるシステムの軌跡をシミュレートし、表示します。
+- **時系列プロット**: シミュレートされた軌跡に対応する、時間経過に伴う x と y の濃度変化を表示します。
+- **リアルタイム計算**: パラメーターの変更や軌跡の開始点の選択に応じて、シミュレーションとプロットが即座に更新されます。
 
-**Prerequisites:**  Node.js
+## 技術スタック
+- **フロントエンド**: React (TypeScript)
+- **ビルドツール**: Vite
+- **グラフ描画**: Plotly.js
+- **スタイリング**: Tailwind CSS
+- **数値計算**: 4次ルンゲクッタ法 (ODEソルバー)
 
+## セットアップと実行
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 依存関係のインストール
+プロジェクトのルートディレクトリで以下のコマンドを実行します。
+```bash
+npm install
+```
+
+### 開発サーバーの起動
+開発モードでアプリケーションを起動するには、以下のコマンドを実行します。
+```bash
+npm run dev
+```
+通常、`http://localhost:5173` でアプリケーションにアクセスできます。
+
+### プロジェクトのビルド
+本番環境用にアプリケーションをビルドするには、以下のコマンドを実行します。
+```bash
+npm run build
+```
+ビルドされたファイルは `dist/` ディレクトリに生成されます。
+
+## モデルについて
+
+このアプリケーションは、以下の常微分方程式（ODE）で記述される二相系モデルをシミュレートします。
+
+$$
+\frac{dx}{dt} = \frac{\alpha_x}{1 + (y/K_{dy})^{n_y}} - d_x x + I_x
+$$
+
+$$
+\frac{dy}{dt} = \frac{\alpha_y}{1 + (x/K_{dx})^{n_x}} - d_y y + I_y
+$$
+
+### パラメーター
+
+| ID      | 名前                 | 説明                               |
+|---------|----------------------|------------------------------------|
+| `alphaX`| αx (Max Gen. Rate X) | X の最大生成速度                   |
+| `alphaY`| αy (Max Gen. Rate Y) | Y の最大生成速度                   |
+| `Kdx`   | Kdx (Dissoc. Const. X)| X の解離定数                       |
+| `Kdy`   | Kdy (Dissoc. Const. Y)| Y の解離定数                       |
+| `nx`    | nx (Hill Coeff. X)   | X のヒル係数                       |
+| `ny`    | ny (Hill Coeff. Y)   | Y のヒル係数                       |
+| `dx`    | dx (Degrad. Rate X)  | X の分解速度                       |
+| `dy`    | dy (Degrad. Rate Y)  | Y の分解速度                       |
+| `Ix`    | Ix (Basal Input X)   | X の基礎入力                       |
+| `Iy`    | Iy (Basal Input Y)   | Y の基礎入力                       |
+
+## 主要コンポーネント
+
+- `App.tsx`: アプリケーションのメインコンポーネント。状態管理と主要なレイアウトを処理します。
+- `components/ParameterControls.tsx`: モデルパラメーターを調整するためのUIを提供します。
+- `components/PhasePlanePlot.tsx`: 相平面プロット（ベクトル場、ヌルクライン、固定点、軌跡）を表示します。
+- `components/TimeCoursePlot.tsx`: 時間経過に伴う x と y の濃度変化を時系列プロットで表示します。
+- `hooks/useOdeSolver.ts`: 常微分方程式の数値解法（4次ルンゲクッタ法）と、プロットに必要なデータを計算するカスタムフックです。
+- `components/SliderInput.tsx`: パラメーター調整に使用される汎用的なスライダーと数値入力コンポーネントです。
+- `components/Spinner.tsx`: 計算中に表示されるローディングスピナーです。
+- `constants.ts`: モデルパラメーターの定義、初期値、プロットドメイン、ODE設定、および色定数を定義します。
+- `types.ts`: アプリケーション全体で使用されるTypeScriptの型定義が含まれています。
+
+## ライセンス
+このプロジェクトは [LICENSE](LICENSE) ファイルに記載されているライセンスの下で公開されています。
