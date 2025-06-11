@@ -1,0 +1,5 @@
+{
+  "name": "Biphasic Analysis Application",
+  "description": "A web application for visual analysis of the dynamics of a system of two coupled ordinary differential equations. Users can interactively adjust parameters and observe changes in system behavior, such as bifurcations, through phase plane and time-course visualizations.",
+  "requestFramePermissions": []
+}
