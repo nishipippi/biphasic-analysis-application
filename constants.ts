@@ -6,12 +6,12 @@ export const PARAMETER_DEFINITIONS: Parameter[] = [
   { id: 'alphaY', name: 'αy (Max Gen. Rate Y)', min: 0, max: 100, step: 1, initialValue: 50 },
   { id: 'Kdx', name: 'Kdx (Dissoc. Const. X)', min: 0.1, max: 100, step: 0.1, initialValue: 30 },
   { id: 'Kdy', name: 'Kdy (Dissoc. Const. Y)', min: 0.1, max: 100, step: 0.1, initialValue: 30 },
-  { id: 'nx', name: 'nx (Hill Coeff. X)', min: 1, max: 10, step: 0.1, initialValue: 4 },
-  { id: 'ny', name: 'ny (Hill Coeff. Y)', min: 1, max: 10, step: 0.1, initialValue: 4 },
+  { id: 'nx', name: 'nx (Hill Coeff. X)', min: 1, max: 10, step: 0.1, initialValue: 8 },
+  { id: 'ny', name: 'ny (Hill Coeff. Y)', min: 1, max: 10, step: 0.1, initialValue: 8 },
   { id: 'dx', name: 'dx (Degrad. Rate X)', min: 0, max: 5, step: 0.1, initialValue: 1 },
   { id: 'dy', name: 'dy (Degrad. Rate Y)', min: 0, max: 5, step: 0.1, initialValue: 1 },
-  { id: 'Ix', name: 'Ix (Basal Input X)', min: 0, max: 10, step: 0.1, initialValue: 0.1 },
-  { id: 'Iy', name: 'Iy (Basal Input Y)', min: 0, max: 10, step: 0.1, initialValue: 0.1 },
+  { id: 'Ix', name: 'Ix (Basal Input X)', min: 0, max: 100, step: 0.1, initialValue: 0 },
+  { id: 'Iy', name: 'Iy (Basal Input Y)', min: 0, max: 100, step: 0.1, initialValue: 0 },
 ];
 
 export const INITIAL_PARAMETERS: ParametersState = PARAMETER_DEFINITIONS.reduce(
