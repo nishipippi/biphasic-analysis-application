@@ -89,7 +89,7 @@ const App: React.FC = () => {
         {/* Right Panel: Visualizations */}
         <div className="w-2/3 flex flex-col p-4 space-y-4 overflow-hidden">
           <div className="flex-1 bg-gray-800 p-2 rounded-lg shadow-inner min-h-0"> {/* min-h-0 is crucial for flex item to shrink */}
-            <h2 className="text-xl font-semibold mb-2 text-center text-teal-300">Phase Plane</h2>
+            {/* <h2 className="text-xl font-semibold mb-2 text-center text-teal-300">Phase Plane</h2> */}
             <PhasePlanePlot
               vectorFieldData={vectorFieldData}
               xNullclineData={xNullclineData}
@@ -102,7 +102,7 @@ const App: React.FC = () => {
             />
           </div>
           <div className="flex-1 bg-gray-800 p-2 rounded-lg shadow-inner min-h-0">
-            <h2 className="text-xl font-semibold mb-2 text-center text-teal-300">Time-Course</h2>
+            {/* <h2 className="text-xl font-semibold mb-2 text-center text-teal-300">Time-Course</h2> */}
             <TimeCoursePlot
               timeCourseData={timeCourseData}
               tMax={PLOT_DOMAIN.tMax}

@@ -55,20 +55,28 @@ export const PhasePlanePlot: React.FC<PhasePlanePlotProps> = ({
           tickfont: { color: '#CBD5E0' },
           fixedrange: true,
         },
+        title: { // 追加
+          text: 'Phase Plane',
+          font: { color: '#E2E8F0', size: 20 },
+          x: 0.05, // グラフの左端から5%の位置
+          xanchor: 'left',
+          y: 0.95, // グラフの上端から5%の位置
+          yanchor: 'top'
+        },
         showlegend: true,
         legend: {
-          bgcolor: 'rgba(42,52,65,0.8)', // gray-800 with opacity
-          font: { color: '#E2E8F0' }, // gray-200
+          bgcolor: 'rgba(42,52,65,0.8)',
+          font: { color: '#E2E8F0' },
           orientation: 'h',
-          yanchor: 'bottom',
-          y: 1.02,
+          yanchor: 'top', // 変更
+          y: 0.98, // 変更
           xanchor: 'right',
           x: 1
         },
-        margin: { l: 50, r: 20, b: 50, t: 30, pad: 4 },
-        paper_bgcolor: '#1A202C', // gray-900
-        plot_bgcolor: '#2D3748', // gray-800
-        autosize: true, // Important for responsive resizing
+        margin: { l: 50, r: 20, b: 50, t: 50, pad: 4 }, // t: 30 から 50 に変更
+        paper_bgcolor: '#1A202C',
+        plot_bgcolor: '#2D3748',
+        autosize: true,
       };
 
       Plotly.react(plotRef.current, data, layout, {responsive: true});
