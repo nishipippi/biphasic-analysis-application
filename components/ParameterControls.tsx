@@ -17,6 +17,11 @@ export const ParameterControls: React.FC<ParameterControlsProps> = ({
   onParametersChange,
   onReset,
 }) => {
+  // Check if current parameters are different from initial parameters
+  const hasParametersChanged = Object.keys(parameters).some(
+    (key) => parameters[key as keyof ParametersState] !== initialParameters[key as keyof ParametersState]
+  );
+
   const handleChange = (paramId: keyof ParametersState, value: number) => {
     onParametersChange({
       ...parameters,
@@ -43,7 +48,12 @@ export const ParameterControls: React.FC<ParameterControlsProps> = ({
       ))}
       <button
         onClick={onReset}
-        className="w-full mt-6 py-2 px-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition duration-150 ease-in-out"
+        disabled={!hasParametersChanged} // Disable if no parameters have changed
+        className={`w-full mt-6 py-2 px-4 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-opacity-75 transition duration-150 ease-in-out ${
+          hasParametersChanged
+            ? 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500'
+            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+        }`}
       >
         Reset Parameters
       </button>
