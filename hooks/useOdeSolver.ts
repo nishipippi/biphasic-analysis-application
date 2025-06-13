@@ -73,8 +73,8 @@ export const useOdeSolver = ({
   const { dt, vectorFieldGridDensity, nullclineGridDensity, fixedPointThreshold } = odeConfig;
 
   const gridPoints = useMemo(() => {
-    const xPoints = [];
-    const yPoints = [];
+    const xPoints: number[] = [];
+    const yPoints: number[] = [];
     for (let i = 0; i <= nullclineGridDensity; i++) {
       xPoints.push(xMin + (i / nullclineGridDensity) * (xMax - xMin));
       yPoints.push(yMin + (i / nullclineGridDensity) * (yMax - yMin));
@@ -88,10 +88,10 @@ export const useOdeSolver = ({
     const dyDtGrid: number[][] = [];
     const fixedPts: TrajectoryPoint[] = [];
 
-    gridPoints.yPoints.forEach(yVal => {
+    gridPoints.yPoints.forEach((yVal: number) => {
       const dxRow: number[] = [];
       const dyRow: number[] = [];
-      gridPoints.xPoints.forEach(xVal => {
+      gridPoints.xPoints.forEach((xVal: number) => {
         const [dxdt, dydt] = odeModel(xVal, yVal, parameters);
         dxRow.push(dxdt);
         dyRow.push(dydt);
@@ -109,36 +109,54 @@ export const useOdeSolver = ({
   const vectorFieldData = useMemo<PlotlyData[] | null>(() => {
     const xVec: (number | null)[] = [];
     const yVec: (number | null)[] = [];
-    const scaleFactor = Math.min(xMax - xMin, yMax - yMin) / vectorFieldGridDensity / 5; // Adjust scale for visibility
+    // 矢印のサイズを調整するパラメータ
+    const scaleFactor = Math.min(xMax - xMin, yMax - yMin) / vectorFieldGridDensity / 5;
+    const arrowheadLength = scaleFactor * 0.3; // 矢頭の長さを本体の30%に
+    const arrowheadAngle = Math.PI / 6; // 矢頭の開き角度 (30度)
 
     for (let i = 0; i < vectorFieldGridDensity; i++) {
       for (let j = 0; j < vectorFieldGridDensity; j++) {
-        const x0 = xMin + (i / (vectorFieldGridDensity-1)) * (xMax - xMin);
-        const y0 = yMin + (j / (vectorFieldGridDensity-1)) * (yMax - yMin);
+        const x0 = xMin + (i / (vectorFieldGridDensity - 1)) * (xMax - xMin);
+        const y0 = yMin + (j / (vectorFieldGridDensity - 1)) * (yMax - yMin);
         const [dx_dt, dy_dt] = odeModel(x0, y0, parameters);
         
-        const norm = Math.sqrt(dx_dt*dx_dt + dy_dt*dy_dt);
-        const arrowLength = scaleFactor * (norm > 0 ? 1 : 0); // Normalized length or zero if no change
-        
-        // To make arrows more visible for small magnitudes, could use log scale or fixed length
-        // For now, proportional to magnitude up to a cap (implicit by scaleFactor)
-        
-        const x1 = x0 + arrowLength * (norm > 0 ? dx_dt / norm : 0);
-        const y1 = y0 + arrowLength * (norm > 0 ? dy_dt / norm : 0);
+        const norm = Math.sqrt(dx_dt * dx_dt + dy_dt * dy_dt);
+        if (norm === 0) continue; // ベクトルが0なら何も描画しない
 
-        xVec.push(x0, x1, null); // null to break line segment for next arrow
+        const arrowBodyLength = scaleFactor; // 矢印の本体の長さを固定にする
+        
+        const x1 = x0 + arrowBodyLength * (dx_dt / norm);
+        const y1 = y0 + arrowBodyLength * (dy_dt / norm);
+
+        // 1. 矢印の本体を描画
+        xVec.push(x0, x1, null);
         yVec.push(y0, y1, null);
+
+        // 2. 矢頭を計算して描画
+        const angle = Math.atan2(dy_dt, dx_dt);
+        
+        // 矢頭の片側
+        const x_head1 = x1 - arrowheadLength * Math.cos(angle - arrowheadAngle);
+        const y_head1 = y1 - arrowheadLength * Math.sin(angle - arrowheadAngle);
+        xVec.push(x1, x_head1, null);
+        yVec.push(y1, y_head1, null);
+
+        // 矢頭のもう片側
+        const x_head2 = x1 - arrowheadLength * Math.cos(angle + arrowheadAngle);
+        const y_head2 = y1 - arrowheadLength * Math.sin(angle + arrowheadAngle);
+        xVec.push(x1, x_head2, null);
+        yVec.push(y1, y_head2, null);
       }
     }
     return [{
-      type: 'scattergl', // scattergl for performance with many lines
+      type: 'scattergl',
       x: xVec,
       y: yVec,
       mode: 'lines',
       name: 'Vector Field',
       line: { color: COLORS.vectorField, width: 1 },
       hoverinfo: 'none',
-      showlegend: false, // Usually too cluttered for legend
+      showlegend: false,
     }];
   }, [parameters, xMin, xMax, yMin, yMax, vectorFieldGridDensity]);
 
